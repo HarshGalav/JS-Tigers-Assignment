@@ -3,6 +3,7 @@ import { signOut, useSession } from "next-auth/react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from 'next/link';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -117,7 +118,9 @@ export default function Dashboard() {
               <td>{vendor.city}</td>
               <td>{vendor.country}</td>
               <td>
-                <a href={`/edit?vendorId=${vendor._id}`}>Edit</a>
+              <Link href={`/vendors/${vendor._id}/edit`}>
+  Edit
+</Link>
                 <button onClick={() => deleteVendor(vendor._id)}>Delete</button>
               </td>
             </tr>

@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Vendor from "@/models/Vendor";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   await connectDB();
-  const vendors = await Vendor.find();
+  const vendors = await Vendor.find(); // Fetch all vendors
   return NextResponse.json(vendors, { status: 200 });
 }
 
