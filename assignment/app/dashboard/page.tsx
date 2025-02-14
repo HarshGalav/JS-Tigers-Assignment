@@ -3,7 +3,7 @@ import { signOut, useSession } from "next-auth/react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from 'next/link';
+import Link from "next/link";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -22,10 +22,10 @@ export default function Dashboard() {
   const [country, setCountry] = useState("");
   const [zipCode, setZipCode] = useState("");
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "loading") return <p className="text-gray-400">Loading...</p>;
   if (!session) {
     router.push("/login");
-    return <p>Redirecting...</p>;
+    return <p className="text-gray-400">Redirecting...</p>;
   }
 
   const addVendor = async (e: React.FormEvent) => {
@@ -46,7 +46,7 @@ export default function Dashboard() {
     });
 
     if (res.ok) {
-      mutate(); // Refresh vendor list
+      mutate();
       setVendorName("");
       setBankAccountNo("");
       setBankName("");
@@ -60,7 +60,6 @@ export default function Dashboard() {
     }
   };
 
-  // ✅ Add deleteVendor function
   const deleteVendor = async (vendorId: string) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this vendor?");
     if (!confirmDelete) return;
@@ -70,58 +69,56 @@ export default function Dashboard() {
     });
 
     if (res.ok) {
-      mutate(); // Refresh vendor list after deletion
+      mutate();
     } else {
       console.error("Failed to delete vendor");
     }
   };
 
   return (
-    <div>
-      <h1>Welcome, {session.user?.name}</h1>
-      <p>Email: {session.user?.email}</p>
-      <button onClick={() => signOut()}>Logout</button>
-
-      {/* Add Vendor Form */}
-      <h2>Add Vendor</h2>
-      <form onSubmit={addVendor}>
-        <input type="text" placeholder="Vendor Name" value={vendorName} onChange={(e) => setVendorName(e.target.value)} required />
-        <input type="text" placeholder="Bank Account Number" value={bankAccountNo} onChange={(e) => setBankAccountNo(e.target.value)} required />
-        <input type="text" placeholder="Bank Name" value={bankName} onChange={(e) => setBankName(e.target.value)} required />
-        <input type="text" placeholder="Address Line 1" value={addressLine1} onChange={(e) => setAddressLine1(e.target.value)} />
-        <input type="text" placeholder="Address Line 2" value={addressLine2} onChange={(e) => setAddressLine2(e.target.value)} />
-        <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
-        <input type="text" placeholder="Country" value={country} onChange={(e) => setCountry(e.target.value)} />
-        <input type="text" placeholder="Zip Code" value={zipCode} onChange={(e) => setZipCode(e.target.value)} />
-        <button type="submit">Add Vendor</button>
+    <div className="bg-gray-900 text-white min-h-screen p-6">
+      <h1 className="text-2xl font-bold">Welcome, {session.user?.name}</h1>
+      <p className="text-gray-400">Email: {session.user?.email}</p>
+      <button onClick={() => signOut()} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Logout</button>
+      
+      <h2 className="text-xl font-semibold mt-6">Add Vendor</h2>
+      <form onSubmit={addVendor} className="bg-gray-800 p-4 rounded mt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input className="p-2 bg-gray-700 text-white rounded" type="text" placeholder="Vendor Name" value={vendorName} onChange={(e) => setVendorName(e.target.value)} required />
+          <input className="p-2 bg-gray-700 text-white rounded" type="text" placeholder="Bank Account Number" value={bankAccountNo} onChange={(e) => setBankAccountNo(e.target.value)} required />
+          <input className="p-2 bg-gray-700 text-white rounded" type="text" placeholder="Bank Name" value={bankName} onChange={(e) => setBankName(e.target.value)} required />
+          <input className="p-2 bg-gray-700 text-white rounded" type="text" placeholder="Address Line 1" value={addressLine1} onChange={(e) => setAddressLine1(e.target.value)} />
+          <input className="p-2 bg-gray-700 text-white rounded" type="text" placeholder="Address Line 2" value={addressLine2} onChange={(e) => setAddressLine2(e.target.value)} />
+          <input className="p-2 bg-gray-700 text-white rounded" type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+          <input className="p-2 bg-gray-700 text-white rounded" type="text" placeholder="Country" value={country} onChange={(e) => setCountry(e.target.value)} />
+          <input className="p-2 bg-gray-700 text-white rounded" type="text" placeholder="Zip Code" value={zipCode} onChange={(e) => setZipCode(e.target.value)} />
+        </div>
+        <button type="submit" className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Vendor</button>
       </form>
-
-      {/* Vendor List */}
-      <h2>Vendors</h2>
-      <table>
+      
+      <h2 className="text-xl font-semibold mt-6">Vendors</h2>
+      <table className="w-full mt-2 border-collapse border border-gray-700">
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Bank Account</th>
-            <th>Bank Name</th>
-            <th>City</th>
-            <th>Country</th>
-            <th>Actions</th>
+          <tr className="bg-gray-800">
+            <th className="p-2 border border-gray-700">Name</th>
+            <th className="p-2 border border-gray-700">Bank Account</th>
+            <th className="p-2 border border-gray-700">Bank Name</th>
+            <th className="p-2 border border-gray-700">City</th>
+            <th className="p-2 border border-gray-700">Country</th>
+            <th className="p-2 border border-gray-700">Actions</th>
           </tr>
         </thead>
         <tbody>
           {data?.map((vendor: any) => (
-            <tr key={vendor._id}>
-              <td>{vendor.vendorName}</td>
-              <td>{vendor.bankAccountNo}</td>
-              <td>{vendor.bankName}</td>
-              <td>{vendor.city}</td>
-              <td>{vendor.country}</td>
-              <td>
-              <Link href={`/vendors/${vendor._id}/edit`}>
-  Edit
-</Link>
-                <button onClick={() => deleteVendor(vendor._id)}>Delete</button>
+            <tr key={vendor._id} className="bg-gray-700">
+              <td className="p-2 border border-gray-600">{vendor.vendorName}</td>
+              <td className="p-2 border border-gray-600">{vendor.bankAccountNo}</td>
+              <td className="p-2 border border-gray-600">{vendor.bankName}</td>
+              <td className="p-2 border border-gray-600">{vendor.city}</td>
+              <td className="p-2 border border-gray-600">{vendor.country}</td>
+              <td className="p-2 border border-gray-600 flex space-x-2">
+                <Link href={`/vendors/${vendor._id}/edit`} className="text-blue-400 hover:underline">Edit</Link>
+                <button onClick={() => deleteVendor(vendor._id)} className="text-red-400 hover:underline">Delete</button>
               </td>
             </tr>
           ))}
