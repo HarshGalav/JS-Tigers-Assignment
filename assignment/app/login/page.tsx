@@ -8,10 +8,15 @@ export default function Login() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  // Redirect to dashboard when logged in
   useEffect(() => {
     if (session) {
-      router.push("/dashboard"); // Redirect to dashboard page
+      const sessionExpiry = session.expires ? new Date(session.expires).getTime() : null;
+
+      if (sessionExpiry && Date.now() > sessionExpiry) {
+        signOut(); // Logout if session is expired
+      } else {
+        router.push("/dashboard");
+      }
     }
   }, [session, router]);
 
